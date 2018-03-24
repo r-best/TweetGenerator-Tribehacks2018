@@ -19,4 +19,11 @@ export class TwitterService {
     ).catch(err => console.log(err));
   }
 
+  getUserTweets(screenname: string){
+    return this.http.get(`${this.API_URL}/tweets/${screenname}`).toPromise()
+    .then(
+      res => {console.log(res.json())},
+      err => {console.log(err)}
+    ).catch(err => console.log(err));
+  }
 }

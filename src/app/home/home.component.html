@@ -6,10 +6,9 @@
         <input (keydown)="onInput($event)" [(ngModel)]="input" type="text" placeholder="Screenname">
         <img src="{{imgURL}}" *ngIf="imgURL !== null"/>
     </div>
-    <p>{{input}}</p>
 </div>
 <div class="row">
     <div class="col">
-        <button class="btn-sm btn-primary" type="submit">Submit</button>
+        <button (click)="submit()" class="btn-sm btn-primary" type="submit">Submit</button>
     </div>
 </div>

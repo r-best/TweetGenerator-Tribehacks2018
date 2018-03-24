@@ -12,17 +12,20 @@ export class HomeComponent implements OnInit {
 
   imgURL: string;
   input: string;
-  inputChanged: boolean = false;
+  inputChanged: boolean;
 
   constructor(private twitter: TwitterService) { }
 
   ngOnInit() {
     this.input = "";
     this.imgURL = null;
+    this.inputChanged = false;
 
     Rx.Observable.timer(0, 1500).subscribe(() => {
       if(this.inputChanged){
-        this.updatePicture(this.input);
+        this.twitter.getUserProfilePicURL(this.input).then((res) => {
+          this.imgURL = res;
+        });
         this.inputChanged = false;
       }
     });
@@ -47,10 +50,7 @@ export class HomeComponent implements OnInit {
     this.inputChanged = true;
   }
 
-  updatePicture(user: string){
-    this.twitter.getUserProfilePicURL(user).then((res) => {
-      // if(res !== null)
-        this.imgURL = res;
-    })
+  submit(){
+    
   }
 }
