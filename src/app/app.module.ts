@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 
 import { TwitterService } from './shared/services/twitter.service';
+import { ToastService } from './shared/services/toast.service';
 import { GeneratorComponent } from './generator/generator.component';
 
 const routes: Routes = [
@@ -28,7 +29,7 @@ const routes: Routes = [
     HttpModule,
     RouterModule.forRoot(routes)
   ],
-  providers: [TwitterService],
+  providers: [TwitterService, ToastService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
