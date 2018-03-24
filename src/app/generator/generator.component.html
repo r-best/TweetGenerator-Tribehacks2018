@@ -1,3 +1,14 @@
-<p>
-  generator works!
-</p>
+<div class="row">
+<div class="col-3"></div>
+<div class="col-6">
+  <div class="container border" *ngFor="let tweet of generated_tweets">
+    <div class="row">
+      <img src="{{imgURLs[getRandInt(imgURLs.length)]}}" class="rounded-circle img-hor-vert"/>
+    </div>
+    <div class="row">
+      <p>{{tweet}}</p>
+    </div>
+  </div>
+</div>
+<div class="col-3"></div>
+</div>

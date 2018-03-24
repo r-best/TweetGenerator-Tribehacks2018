@@ -35,7 +35,6 @@ export class HomeComponent implements OnInit {
   }
 
   onInput(event: any, index: number){
-    console.log(index)
     let screenNameChars = /[A-Za-z0-9_]|(Backspace)/;
     if(!screenNameChars.test(event.key)){
       event.preventDefault();
@@ -78,7 +77,7 @@ export class HomeComponent implements OnInit {
       }));
     });
     Promise.all(promises).then(
-      res => {this.router.navigate([`/generator`], {queryParams: {user: this.inputs.map(item => item[`text`])}});},
+      res => this.router.navigate([`/generator`], {queryParams: {user: this.inputs.map(item => item[`text`]+"-"+(parseInt(item[`count`])/200))}}),
       err => this.toast.showToast(`alert-danger`, err)
     );
   }

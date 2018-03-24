@@ -9,12 +9,11 @@ import { TwitterService } from '../shared/services/twitter.service';
 })
 export class GeneratorComponent implements OnInit {
 
-    user_tweets: string[];
-    N: number;
-    M: number;
+    N: number; // Value of N to use in N-gram generation
+    M: number; // # of tweets to generate
 
-    P: {};
-    tokens: string[];
+    imgURLs: string[];
+    generated_tweets: string[];
 
     constructor(private route: ActivatedRoute, private twitter: TwitterService) { }
 
@@ -33,28 +32,36 @@ export class GeneratorComponent implements OnInit {
         if(!Array.isArray(users))
             users = [users];
         
-        this.user_tweets = [];
+        let user_tweets = [];
         let promises = [];
+        this.imgURLs = [];
         users.forEach(user => {
-            promises.push(this.twitter.getUserTweets(user, 1).then(res => {
+            let args = user.split(`-`);
+            this.twitter.getUserProfilePicURL(args[0]).then(res => {
                 if(res !== null)
-                    this.user_tweets = this.user_tweets.concat(res);
+                    this.imgURLs.push(res);
+            })
+            promises.push(this.twitter.getUserTweets(args[0], parseInt(args[1])).then(res => {
+                if(res !== null)
+                    user_tweets = user_tweets.concat(res);
             }));
         });
         Promise.all(promises).then(() => {
-            this._buildModel()
+            console.log(user_tweets.length)
+            this._buildModel(user_tweets)
         });
     }
 
-    _buildModel(){
+    _buildModel(user_tweets){
         console.log("Starting")
         let ngrams = {};
         let n1grams = {};
-        this.tokens = [];
-        this.user_tweets.forEach(tweet => {
+        let tokens = [];
+        user_tweets.forEach(tweet => {
             tweet = tweet.replace(/https?:\/\/.*\b/g, "");
             tweet = tweet.replace(/([\(\)\$\.\!\?,'`\"%&:;])/, " $1 ");
             tweet = tweet.trim();
+            tweet = tweet.toLowerCase();
             let words = tweet.split(/[\s\n]+/);
 
             if(words.length < this.N)
@@ -81,27 +88,27 @@ export class GeneratorComponent implements OnInit {
                     ngrams[ngram] = 0;
                 ngrams[ngram]++;
                 // Add this token to the tokens array
-                this.tokens.push(words[i]);
+                tokens.push(words[i]);
             }
         });
 
         //Calculate probabilities
-        this.P = {};
+        let P = {};
         Object.keys(n1grams).forEach(n1gram => {
-            this.P[n1gram] = {};
-            this.tokens.forEach(token => {
+            P[n1gram] = {};
+            tokens.forEach(token => {
                 let ngram = n1gram + " " + token;
                 if(ngram in ngrams){
-                    this.P[n1gram][token] = ngrams[ngram] / n1grams[n1gram];
+                    P[n1gram][token] = ngrams[ngram] / n1grams[n1gram];
                 }
             });
         });
-        console.log(this.P)
-        this._generateTweets();
+        console.log(P)
+        this._generateTweets(P, tokens);
     }
 
-    _generateTweets(){
-        let generated = [];
+    _generateTweets(P: {}, tokens: string[]){
+        this.generated_tweets = [];
         for(let m = 0; m < this.M; m++){
             let tweet = "";
             for(let n = 0; n < this.N-1; n++){
@@ -119,12 +126,12 @@ export class GeneratorComponent implements OnInit {
                 for(let n = 0; n < this.N-2; n++)
                     lastN1Words = temp.pop() + " " + lastN1Words;
                 
-                for(let i = 0; i < this.tokens.length; i++){
-                    if(!(lastN1Words in this.P) || !(this.tokens[i] in this.P[lastN1Words]) || this.P[lastN1Words][this.tokens[i]] === 0)
+                for(let i = 0; i < tokens.length; i++){
+                    if(!(lastN1Words in P) || !(tokens[i] in P[lastN1Words]) || P[lastN1Words][tokens[i]] === 0)
                         continue;
-                    counter += this.P[lastN1Words][this.tokens[i]];
+                    counter += P[lastN1Words][tokens[i]];
                     if(counter > rand){
-                        tweet += " " + this.tokens[i];
+                        tweet += " " + tokens[i];
                         break;
                     }
                 };
@@ -132,11 +139,15 @@ export class GeneratorComponent implements OnInit {
             tweet = tweet.replace(/\s*<start>\s*/, "");
             tweet = tweet.replace(/\s*<end>/, "");
             tweet = tweet.replace(/\s*'\s*/g, "");
-            tweet = tweet.replace(/\s*([,\.\!\?\)])/g, "$1");
+            tweet = tweet.replace(/\s*([,\.\!\?\)])/g, "$1 ");
             tweet = tweet.replace(/([\(\$])\s*/g, "$1");
             tweet = tweet.replace(/\s*([\)])/g, "$1");
             tweet = tweet.replace(/^([a-z])/g, tweet.charAt(0).toUpperCase());
-            console.log(tweet)
+            this.generated_tweets.push(tweet);
         }
+    }
+
+    getRandInt(max: number){
+        return Math.floor(Math.random()*max);
     }
 }

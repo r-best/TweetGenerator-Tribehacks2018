@@ -14,7 +14,7 @@
                 <span class="input-group-text">@</span>
             </div>
             <input (keydown)="onInput($event, i)" [(ngModel)]="inputs[i]['text']" type="text" placeholder="Screenname"/>
-            <img src="{{imgURLs[i]}}" *ngIf="imgURLs[i] !== null"/>
+            <img src="{{imgURLs[i]}}" *ngIf="imgURLs[i] !== null" class="rounded-circle"/>
         </div>
         <div class="input-group pl-2">
             <div class="input-group-prepend pl-4">

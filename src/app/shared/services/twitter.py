@@ -27,9 +27,10 @@ def getIconURL(user):
 @app.route('/tweets/<user>')
 def getUserTweets(user):
     numPages = flask.request.args.get('pages')
-    if not isinstance(numPages, numbers.Number):
+    if numPages is None:
         numPages = 1
-    print numPages
+    else:
+        numPages = int(numPages)
     try:
         api = authenticate()
         tweets = []
