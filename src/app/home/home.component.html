@@ -1,31 +1,33 @@
 <div class="row">
-    <div class="col">
+    <div class="col text-center">
         <h3>Welcome to Tweet Generator</h3>
     </div>
 </div>
-<div class="row">
+<div class="row mt-5 ml-5">
     <button (click)="addUser()" class="btn-sm btn-primary ml-3">+ Add User</button>
 </div>
-<div class="row" *ngFor="let input of inputs; let i = index; trackBy:trackByIndex">
-    <div class="col">
-        <div class="input-group">
-            <button (click)="removeUser(i)" class="btn-sm btn-primary">-</button>
-            <div class="input-group-prepend pl-2">
-                <span class="input-group-text">@</span>
+<div class="row ml-5">
+    <div class="col-8">
+        <div class="row pt-2" *ngFor="let input of inputs; let i = index; trackBy:trackByIndex">
+            <div class="col">
+                <div class="input-group">
+                    <button (click)="removeUser(i)" class="btn-sm btn-primary">-</button>
+                    <div class="input-group-prepend pl-2">
+                        <span class="input-group-text">@</span>
+                    </div>
+                    <input (keydown)="onInput($event, i)" [(ngModel)]="inputs[i]['text']" type="text" placeholder="Screenname"/>
+                    <img src="{{imgURLs[i]}}" *ngIf="imgURLs[i] !== null" class="rounded-circle"/>
+                </div>
+                <div class="input-group pl-2 pt-1">
+                    <div class="input-group-prepend pl-4">
+                        <span class="input-group-text">tweets to fetch</span>
+                    </div>
+                    <input type="number" [(ngModel)]="inputs[i]['count']" min="200" max="1000" step="200"/>
+                </div>
             </div>
-            <input (keydown)="onInput($event, i)" [(ngModel)]="inputs[i]['text']" type="text" placeholder="Screenname"/>
-            <img src="{{imgURLs[i]}}" *ngIf="imgURLs[i] !== null" class="rounded-circle"/>
-        </div>
-        <div class="input-group pl-2">
-            <div class="input-group-prepend pl-4">
-                <span class="input-group-text">tweets to fetch</span>
-            </div>
-            <input type="number" [(ngModel)]="inputs[i]['count']" min="200" max="1000" step="200"/>
         </div>
     </div>
-</div>
-<div class="row mt-5">
-    <div class="col">
+    <div class="col-4">
         <div class="row">
             <div class="col">
                 <button data-toggle="collapse" data-target="#options" class="btn-sm btn-secondary">Advanced Options</button>
