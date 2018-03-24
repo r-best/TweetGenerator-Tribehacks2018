@@ -12,7 +12,7 @@ export class GeneratorComponent implements OnInit {
     N: number; // Value of N to use in N-gram generation
     M: number; // # of tweets to generate
 
-    imgURLs: string[];
+    userData: {}[];
     generated_tweets: string[];
 
     constructor(private route: ActivatedRoute, private twitter: TwitterService) { }
@@ -34,12 +34,12 @@ export class GeneratorComponent implements OnInit {
         
         let user_tweets = [];
         let promises = [];
-        this.imgURLs = [];
+        this.userData = [];
         users.forEach(user => {
             let args = user.split(`-`);
-            this.twitter.getUserProfilePicURL(args[0]).then(res => {
+            this.twitter.getUserData(args[0]).then(res => {
                 if(res !== null)
-                    this.imgURLs.push(res);
+                    this.userData.push(res);
             })
             promises.push(this.twitter.getUserTweets(args[0], parseInt(args[1])).then(res => {
                 if(res !== null)

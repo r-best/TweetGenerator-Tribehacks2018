@@ -14,11 +14,11 @@ def authenticate():
     auth.set_access_token(keys['access_token_key'], keys['access_token_secret'])
     return tweepy.API(auth)
 
-@app.route('/icons/<user>')
-def getIconURL(user):
+@app.route('/users/<user>')
+def getUser(user):
     try:
-        x = authenticate().get_user(screen_name=user).profile_image_url
-        return json.dumps(x)
+        x = authenticate().get_user(screen_name=user)
+        return json.dumps({'name': x.name, 'profile_image_url': x.profile_image_url})
     except tweepy.RateLimitError:
         return json.dumps("Whoops, rate limit exceeded!")
     except tweepy.TweepError as err:

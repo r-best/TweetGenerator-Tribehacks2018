@@ -25,8 +25,10 @@ export class HomeComponent implements OnInit {
     Rx.Observable.timer(0, 1500).subscribe(() => {
       for(let i = 0; i < this.inputsChanged.length; i++){
         if(this.inputsChanged[i]){
-          this.twitter.getUserProfilePicURL(this.inputs[i]['text']).then((res) => {
-            this.imgURLs[i] = res;
+          this.twitter.getUserData(this.inputs[i]['text']).then((res) => {
+            console.log(res)
+            // if(res === null)
+            this.imgURLs[i] = res[`profile_image_url`];
           });
           this.inputsChanged[i] = false;
         }
@@ -70,7 +72,7 @@ export class HomeComponent implements OnInit {
   submit(){
     let promises = [];
     this.inputs.forEach(input => {
-      promises.push(this.twitter.getUserProfilePicURL(input[`text`]).then((res) => {
+      promises.push(this.twitter.getUserData(input[`text`]).then((res) => {
         if(res !== null)
           return Promise.resolve();
         return Promise.reject(`Twitter user '${input[`text`]}' does not exist`);

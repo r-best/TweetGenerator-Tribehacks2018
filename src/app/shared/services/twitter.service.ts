@@ -10,12 +10,15 @@ export class TwitterService {
     
   }
 
-  getUserProfilePicURL(screenname: string): Promise<string>{
-    return this.http.get(`${this.API_URL}/icons/${screenname}`).toPromise()
+  getUserData(screenname: string): Promise<{}>{
+    return this.http.get(`${this.API_URL}/users/${screenname}`).toPromise()
     .then(
-      res => {return (res.json() === "User not found." || res.json() === "User has been suspended.") ? null : res.json()},
-      err => {console.log(err); return null}
-    ).catch(err => {console.log(err); return null});
+      res => {
+        console.log(res)
+        return (res.json() === "User not found." || res.json() === "User has been suspended.") ? {} : res.json()
+      },
+      err => {console.log(err); return {}}
+    ).catch(err => {console.log(err); return {}});
   }
 
   getUserTweets(screenname: string, count: number){

@@ -1,14 +1,26 @@
 <div class="row">
-<div class="col-3"></div>
-<div class="col-6">
-  <div class="container border" *ngFor="let tweet of generated_tweets">
-    <div class="row">
-      <img src="{{imgURLs[getRandInt(imgURLs.length)]}}" class="rounded-circle img-hor-vert"/>
-    </div>
-    <div class="row">
-      <p>{{tweet}}</p>
+  <div class="col-3"></div>
+  <div class="col-6">
+    <div class="row border mb-3 rounded" *ngFor="let tweet of generated_tweets; let i = index">
+      <input #rand class="d-none" value="{{getRandInt(userData.length)}}"/>
+      <div class="col-1">
+        <img src="{{userData[rand.value]['profile_image_url']}}" class="rounded-circle img-hor-vert"/>
+      </div>
+      <div class="col-11">
+        <div class="pl-2">
+          <div class="row">
+            <div class="col">
+              <span class="font-weight-bold">Almost {{userData[rand.value]['name']}}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label>{{tweet}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-<div class="col-3"></div>
+  <div class="col-3"></div>
 </div>
