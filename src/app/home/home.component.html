@@ -3,7 +3,8 @@
         <div class="input-group-prepend">
             <span class="input-group-text" id="basic-addon1">@</span>
         </div>
-        <input type="text" class="" placeholder="Screenname">
+        <input (input)="checkUser($event)" type="text" class="" placeholder="Screenname">
+        <img src="{{imgURL}}" *ngIf="imgURL !== null"/>
     </div>
 </div>
 <div class="row">
