@@ -18,9 +18,34 @@
         </div>
         <div class="input-group pl-2">
             <div class="input-group-prepend pl-4">
-                <span class="input-group-text">#</span>
+                <span class="input-group-text">tweets to fetch</span>
             </div>
-            <input type="number" [(ngModel)]="inputs[i]['count']" min="200" max="1000" step="200" placeholder="tweets to fetch"/>
+            <input type="number" [(ngModel)]="inputs[i]['count']" min="200" max="1000" step="200"/>
+        </div>
+    </div>
+</div>
+<div class="row mt-5">
+    <div class="col">
+        <div class="row">
+            <div class="col">
+                <button data-toggle="collapse" data-target="#options" class="btn-sm btn-secondary">Advanced Options</button>
+            </div>
+        </div>
+        <div id="options" class="row collapse">
+            <div class="col">
+                <div class="row input-group pl-2 mt-2">
+                    <div class="input-group-prepend pl-4">
+                        <span class="input-group-text">complexity of N-gram model</span>
+                    </div>
+                    <input type="number" [(ngModel)]="N" min="2" max="5"/>
+                </div>
+                <div class="row input-group pl-2 mt-2">
+                    <div class="input-group-prepend pl-4">
+                        <span class="input-group-text">tweets to generate</span>
+                    </div>
+                    <input type="number" [(ngModel)]="M" min="50" max="1000" step="50"/>
+                </div>
+            </div>
         </div>
     </div>
 </div>

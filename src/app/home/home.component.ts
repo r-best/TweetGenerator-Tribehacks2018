@@ -15,12 +15,18 @@ export class HomeComponent implements OnInit {
   imgURLs: string[];
   inputsChanged: boolean[];
 
+  // Advanced Parameters
+  N: number;
+  M: number;
+
   constructor(private router: Router, private twitter: TwitterService, private toast: ToastService) { }
 
   ngOnInit() {
     this.inputs = [{text:"",count:200}];
     this.imgURLs = [null];
     this.inputsChanged = [false];
+    this.N = 2;
+    this.M = 100;
 
     Rx.Observable.timer(0, 1500).subscribe(() => {
       for(let i = 0; i < this.inputsChanged.length; i++){
@@ -79,7 +85,16 @@ export class HomeComponent implements OnInit {
       }));
     });
     Promise.all(promises).then(
-      res => this.router.navigate([`/generator`], {queryParams: {user: this.inputs.map(item => item[`text`]+"-"+(parseInt(item[`count`])/200))}}),
+      res => this.router.navigate(
+                [`/generator`], 
+                {queryParams: 
+                  {
+                    user: this.inputs.map(item => item[`text`]+"-"+(parseInt(item[`count`])/200)),
+                    N: this.N,
+                    M: this.M
+                  }
+                }
+              ),
       err => this.toast.showToast(`alert-danger`, err)
     );
   }
