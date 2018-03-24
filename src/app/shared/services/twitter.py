@@ -29,13 +29,14 @@ def getUserTweets(user):
     numPages = flask.request.args.get('pages')
     if not isinstance(numPages, numbers.Number):
         numPages = 1
+    print numPages
     try:
         api = authenticate()
         tweets = []
         for i in range(1, numPages+1):
             user_tweets = api.user_timeline(screen_name=user, count=200, page=i)
             for tweet in user_tweets:
-                if 'RT @' not in tweet:
+                if 'RT @' not in tweet.text:
                     try:
                         tweets.append(tweet.text.encode('ascii'))
                     except UnicodeEncodeError:
