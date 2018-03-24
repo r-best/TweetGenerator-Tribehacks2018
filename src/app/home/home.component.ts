@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TwitterService } from '../shared/services/twitter.service';
-import { Observable } from 'rxjs/Observable';
+import { Router } from '@angular/router';
 import * as Rx from 'rxjs';
 
 @Component({
@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
   input: string;
   inputChanged: boolean;
 
-  constructor(private twitter: TwitterService) { }
+  constructor(private router: Router, private twitter: TwitterService) { }
 
   ngOnInit() {
     this.input = "";
@@ -51,6 +51,10 @@ export class HomeComponent implements OnInit {
   }
 
   submit(){
+    this.twitter.getUserProfilePicURL(this.input).then((res) => {
+      if(res !== null)
+        this.router.navigate([`/generator`], {queryParams: {user: this.input}});
+    });
     
   }
 }

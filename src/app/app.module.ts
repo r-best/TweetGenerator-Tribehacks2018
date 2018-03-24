@@ -8,16 +8,19 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 
 import { TwitterService } from './shared/services/twitter.service';
+import { GeneratorComponent } from './generator/generator.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
-  { path: '', redirectTo: '/home', pathMatch: 'full' }
+  { path: 'generator', component: GeneratorComponent },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
 ]
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    GeneratorComponent
   ],
   imports: [
     BrowserModule,
