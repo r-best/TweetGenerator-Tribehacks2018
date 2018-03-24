@@ -18,7 +18,7 @@ def authenticate():
 def getUser(user):
     try:
         x = authenticate().get_user(screen_name=user)
-        return json.dumps({'name': x.name, 'profile_image_url': x.profile_image_url})
+        return json.dumps({'name': x.name, 'screen_name': x.screen_name, 'profile_image_url': x.profile_image_url})
     except tweepy.RateLimitError:
         return json.dumps("Whoops, rate limit exceeded!")
     except tweepy.TweepError as err:

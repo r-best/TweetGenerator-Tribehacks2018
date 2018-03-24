@@ -9,15 +9,19 @@ import { TwitterService } from '../shared/services/twitter.service';
 })
 export class GeneratorComponent implements OnInit {
 
+    loaded: boolean;
+    
     N: number; // Value of N to use in N-gram generation
     M: number; // # of tweets to generate
 
     userData: {}[];
     generated_tweets: string[];
+    randomUsers: number[]; // Array of indexes to userData, for the display to use to put a random user on each generated tweet
 
     constructor(private route: ActivatedRoute, private twitter: TwitterService) { }
 
     ngOnInit() {
+        this.loaded = false;
         this.N = this.route.snapshot.queryParams.N;
         this.M = this.route.snapshot.queryParams.M;
         let users = this.route.snapshot.queryParams.user;
@@ -45,9 +49,9 @@ export class GeneratorComponent implements OnInit {
                 if(res !== null)
                     user_tweets = user_tweets.concat(res);
             }));
+            this.incrementProgressBarPercent(10)
         });
         Promise.all(promises).then(() => {
-            console.log(user_tweets.length)
             this._buildModel(user_tweets)
         });
     }
@@ -93,7 +97,12 @@ export class GeneratorComponent implements OnInit {
         });
 
         //Calculate probabilities
+        console.log("Calculating probabilites")
         let P = {};
+        let completedCalculations = 0.0;
+        let totalToCalculate = Object.keys(n1grams).length;
+        let UPDATE_PROGRESS_INCR = 1.0;
+        let lastProgressUpdate = 0.0;
         Object.keys(n1grams).forEach(n1gram => {
             P[n1gram] = {};
             tokens.forEach(token => {
@@ -102,6 +111,15 @@ export class GeneratorComponent implements OnInit {
                     P[n1gram][token] = ngrams[ngram] / n1grams[n1gram];
                 }
             });
+            completedCalculations++;
+            let progress = completedCalculations / totalToCalculate;
+            console.log("TOTALTOCALCULATE", totalToCalculate)
+            console.log("PROGRESS", progress)
+            if(progress > lastProgressUpdate + UPDATE_PROGRESS_INCR){
+                lastProgressUpdate += UPDATE_PROGRESS_INCR;
+                this.incrementProgressBarPercent(UPDATE_PROGRESS_INCR);
+                console.log(lastProgressUpdate);
+            }
         });
         console.log(P)
         this._generateTweets(P, tokens);
@@ -109,6 +127,7 @@ export class GeneratorComponent implements OnInit {
 
     _generateTweets(P: {}, tokens: string[]){
         this.generated_tweets = [];
+        this.randomUsers = [];
         for(let m = 0; m < this.M; m++){
             let tweet = "";
             for(let n = 0; n < this.N-1; n++){
@@ -144,10 +163,21 @@ export class GeneratorComponent implements OnInit {
             tweet = tweet.replace(/\s*([\)])/g, "$1");
             tweet = tweet.replace(/^([a-z])/g, tweet.charAt(0).toUpperCase());
             this.generated_tweets.push(tweet);
+            this.randomUsers.push(this.getRandInt(this.userData.length));
         }
+        this.loaded = true;
+        console.log(this.randomUsers)
     }
 
     getRandInt(max: number){
         return Math.floor(Math.random()*max);
+    }
+
+    incrementProgressBarPercent(percent: number){
+        let x = document.getElementById("progress");
+        if(x !== null){
+            let y = parseInt(x.style.width.substring(0, x.style.width.length)) + percent;
+            x.style.width = y + "%";
+        }
     }
 }
