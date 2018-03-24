@@ -36,13 +36,12 @@ export class GeneratorComponent implements OnInit {
         this.user_tweets = [];
         let promises = [];
         users.forEach(user => {
-            promises.push(this.twitter.getUserTweets(user).then(res => {
+            promises.push(this.twitter.getUserTweets(user, 1).then(res => {
                 if(res !== null)
                     this.user_tweets = this.user_tweets.concat(res);
             }));
         });
         Promise.all(promises).then(() => {
-            console.log(this.user_tweets)
             this._buildModel()
         });
     }
@@ -66,7 +65,6 @@ export class GeneratorComponent implements OnInit {
             
             // Construct N-gram and (N-1)-gram from each token and the tokens before it
             for(let i = this.N-2; i < words.length; i++){
-                console.log(words[i])
                 // Construct (N-1)-gram from each word and the N-2 tokens behind it
                 let n1gramTokens = [];
                 for(let n = 0; n < this.N-1; n++)

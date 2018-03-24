@@ -18,8 +18,8 @@ export class TwitterService {
     ).catch(err => {console.log(err); return null});
   }
 
-  getUserTweets(screenname: string){
-    return this.http.get(`${this.API_URL}/tweets/${screenname}`).toPromise()
+  getUserTweets(screenname: string, count: number){
+    return this.http.get(`${this.API_URL}/tweets/${screenname}?pages=${count}`).toPromise()
     .then(
       res => {return res.json() === "Sorry, that page does not exist." ? null : res.json()},
       err => {console.log(err); return null}

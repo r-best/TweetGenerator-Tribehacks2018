@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TwitterService } from '../shared/services/twitter.service';
 import { Router } from '@angular/router';
 import * as Rx from 'rxjs';
+import { ToastService } from '../shared/services/toast.service';
 
 @Component({
   selector: 'app-home',
@@ -10,28 +11,31 @@ import * as Rx from 'rxjs';
 })
 export class HomeComponent implements OnInit {
 
-  imgURL: string;
-  input: string;
-  inputChanged: boolean;
+  inputs: {}[];
+  imgURLs: string[];
+  inputsChanged: boolean[];
 
-  constructor(private router: Router, private twitter: TwitterService) { }
+  constructor(private router: Router, private twitter: TwitterService, private toast: ToastService) { }
 
   ngOnInit() {
-    this.input = "";
-    this.imgURL = null;
-    this.inputChanged = false;
+    this.inputs = [{text:"",count:200}];
+    this.imgURLs = [null];
+    this.inputsChanged = [false];
 
     Rx.Observable.timer(0, 1500).subscribe(() => {
-      if(this.inputChanged){
-        this.twitter.getUserProfilePicURL(this.input).then((res) => {
-          this.imgURL = res;
-        });
-        this.inputChanged = false;
+      for(let i = 0; i < this.inputsChanged.length; i++){
+        if(this.inputsChanged[i]){
+          this.twitter.getUserProfilePicURL(this.inputs[i]['text']).then((res) => {
+            this.imgURLs[i] = res;
+          });
+          this.inputsChanged[i] = false;
+        }
       }
     });
   }
 
-  onInput(event: any){
+  onInput(event: any, index: number){
+    console.log(index)
     let screenNameChars = /[A-Za-z0-9_]|(Backspace)/;
     if(!screenNameChars.test(event.key)){
       event.preventDefault();
@@ -40,21 +44,46 @@ export class HomeComponent implements OnInit {
 
     let user: string = event.target.value;
     if(event.key === 'Backspace'){
-      console.log("A"+user)
       user = user.substring(0, user.length-1);
-      console.log("A"+user)
     }
     else{
       user += event.key;
     }
-    this.inputChanged = true;
+    this.inputsChanged[index] = true;
+  }
+
+  addUser(){
+    if(this.inputs.length < 5){
+      this.inputs[this.inputs.length] = {text:"",count:200};
+      this.imgURLs[this.imgURLs.length] = null;
+      this.inputsChanged[this.inputsChanged.length] = false;
+    }
+  }
+
+  removeUser(index: number){
+    if(this.inputs.length > 1){
+      this.inputs.splice(index, 1);
+      this.imgURLs.splice(index, 1);
+      this.inputsChanged.splice(index, 1);
+    }
   }
 
   submit(){
-    this.twitter.getUserProfilePicURL(this.input).then((res) => {
-      if(res !== null)
-        this.router.navigate([`/generator`], {queryParams: {user: this.input}});
+    let promises = [];
+    this.inputs.forEach(input => {
+      promises.push(this.twitter.getUserProfilePicURL(input[`text`]).then((res) => {
+        if(res !== null)
+          return Promise.resolve();
+        return Promise.reject(`Twitter user '${input[`text`]}' does not exist`);
+      }));
     });
-    
+    Promise.all(promises).then(
+      res => {this.router.navigate([`/generator`], {queryParams: {user: this.inputs.map(item => item[`text`])}});},
+      err => this.toast.showToast(`alert-danger`, err)
+    );
+  }
+
+  trackByIndex(index: number, value: string) {
+    return index;
   }
 }
