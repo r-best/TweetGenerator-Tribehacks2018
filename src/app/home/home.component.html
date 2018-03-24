@@ -3,9 +3,10 @@
         <div class="input-group-prepend">
             <span class="input-group-text" id="basic-addon1">@</span>
         </div>
-        <input (input)="checkUser($event)" type="text" class="" placeholder="Screenname">
+        <input (keydown)="onInput($event)" [(ngModel)]="input" type="text" placeholder="Screenname">
         <img src="{{imgURL}}" *ngIf="imgURL !== null"/>
     </div>
+    <p>{{input}}</p>
 </div>
 <div class="row">
     <div class="col">

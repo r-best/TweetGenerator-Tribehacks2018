@@ -3,6 +3,7 @@ import json
 import sys
 import flask
 from flask_cors import CORS
+import numbers
 
 app = flask.Flask(__name__)
 CORS(app, resources={r"*": {"origins": "*"}})
@@ -15,11 +16,31 @@ def authenticate():
 
 @app.route('/icons/<user>')
 def getIconURL(user):
-    print user
     try:
         x = authenticate().get_user(screen_name=user).profile_image_url
-        print x
         return json.dumps(x)
+    except tweepy.RateLimitError:
+        return json.dumps("Whoops, rate limit exceeded!")
+    except tweepy.TweepError as err:
+        return json.dumps(err.message[0]['message'])
+
+@app.route('/tweets/<user>')
+def getUserTweets(user):
+    numPages = flask.request.args.get('pages')
+    if not isinstance(numPages, numbers.Number):
+        numPages = 1
+    try:
+        api = authenticate()
+        tweets = []
+        for i in range(1, numPages+1):
+            user_tweets = api.user_timeline(screen_name=user, count=200, page=i)
+            for tweet in user_tweets:
+                if 'RT @' not in tweet:
+                    try:
+                        tweets.append(tweet.text.encode('ascii'))
+                    except UnicodeEncodeError:
+                        continue
+        return json.dumps(tweets)
     except tweepy.RateLimitError:
         return "Whoops, rate limit exceeded!"
     except tweepy.TweepError as err:
