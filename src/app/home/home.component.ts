@@ -86,16 +86,16 @@ export class HomeComponent implements OnInit {
       }));
     });
     Promise.all(promises).then(
-      res => console.log('a'),//this.router.navigate(
-              //   [`/generator`], 
-              //   {queryParams: 
-              //     {
-              //       user: this.inputs.map(item => item[`text`]+"-"+(parseInt(item[`count`])/200)),
-              //       N: this.N,
-              //       M: this.M
-              //     }
-              //   }
-              // ),
+      res => this.router.navigate(
+                [`/generator`], 
+                {queryParams: 
+                  {
+                    user: this.inputs.map(item => item[`text`]+"-"+(parseInt(item[`count`])/200)),
+                    N: this.N,
+                    M: this.M
+                  }
+                }
+              ),
       err => this.toast.showToast(`alert-danger`, err)
     );
   }
