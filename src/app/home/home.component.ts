@@ -79,22 +79,23 @@ export class HomeComponent implements OnInit {
     let promises = [];
     this.inputs.forEach(input => {
       promises.push(this.twitter.getUserData(input[`text`]).then((res) => {
-        if(res !== null)
+        console.log(res)
+        if(Object.keys(res).length > 0)
           return Promise.resolve();
         return Promise.reject(`Twitter user '${input[`text`]}' does not exist`);
       }));
     });
     Promise.all(promises).then(
-      res => this.router.navigate(
-                [`/generator`], 
-                {queryParams: 
-                  {
-                    user: this.inputs.map(item => item[`text`]+"-"+(parseInt(item[`count`])/200)),
-                    N: this.N,
-                    M: this.M
-                  }
-                }
-              ),
+      res => console.log('a'),//this.router.navigate(
+              //   [`/generator`], 
+              //   {queryParams: 
+              //     {
+              //       user: this.inputs.map(item => item[`text`]+"-"+(parseInt(item[`count`])/200)),
+              //       N: this.N,
+              //       M: this.M
+              //     }
+              //   }
+              // ),
       err => this.toast.showToast(`alert-danger`, err)
     );
   }

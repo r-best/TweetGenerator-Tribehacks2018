@@ -14,7 +14,7 @@ export class TwitterService {
     return this.http.get(`${this.API_URL}/users/${screenname}`).toPromise()
     .then(
       res => {
-        console.log(res)
+        console.log(res.json())
         return (res.json() === "User not found." || res.json() === "User has been suspended.") ? {} : res.json()
       },
       err => {console.log(err); return {}}
