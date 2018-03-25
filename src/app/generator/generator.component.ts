@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { TwitterService } from '../shared/services/twitter.service';
 
@@ -8,6 +9,22 @@ import { TwitterService } from '../shared/services/twitter.service';
     styleUrls: ['./generator.component.css']
 })
 export class GeneratorComponent implements OnInit {
+    replyImg: string = `assets/comment.png`;
+    retweetImg: string = `assets/retweet.png`;
+    favImg: string = `assets/fav.png`;
+    mailImg: string = `assets/mail.png`;
+
+    PREFIXES: string[] = [
+        `Almost `,
+        `Maybe `,
+        `Not Really `,
+        `Robo-`,
+        `The Cooler `,
+        `Better `,
+        `The Sequel To `,
+        `Randomly Generated `,
+        `Turing-Tested `
+    ];
 
     loaded: boolean;
     
@@ -17,8 +34,9 @@ export class GeneratorComponent implements OnInit {
     userData: {}[];
     generated_tweets: string[];
     randomUsers: number[]; // Array of indexes to userData, for the display to use to put a random user on each generated tweet
+    randomPrefixes: number[];
 
-    constructor(private route: ActivatedRoute, private twitter: TwitterService) { }
+    constructor(private route: ActivatedRoute, private location: Location, private twitter: TwitterService) { }
 
     ngOnInit() {
         this.loaded = false;
@@ -125,6 +143,7 @@ export class GeneratorComponent implements OnInit {
     _generateTweets(P: {}, tokens: string[]){
         this.generated_tweets = [];
         this.randomUsers = [];
+        this.randomPrefixes = [];
         for(let m = 0; m < this.M; m++){
             let tweet = "";
             for(let n = 0; n < this.N-1; n++){
@@ -152,8 +171,8 @@ export class GeneratorComponent implements OnInit {
                     }
                 };
             }
-            tweet = tweet.replace(/\s*<start>\s*/, "");
-            tweet = tweet.replace(/\s*<end>/, "");
+            tweet = tweet.replace(/\s*<start>\s*/g, "");
+            tweet = tweet.replace(/\s*<end>/g, "");
             tweet = tweet.replace(/\s*'\s*/g, "");
             tweet = tweet.replace(/\s*([,\.\!\?\)])/g, "$1 ");
             tweet = tweet.replace(/([\(\$])\s*/g, "$1");
@@ -161,6 +180,7 @@ export class GeneratorComponent implements OnInit {
             tweet = tweet.replace(/^([a-z])/g, tweet.charAt(0).toUpperCase());
             this.generated_tweets.push(tweet);
             this.randomUsers.push(this.getRandInt(this.userData.length));
+            this.randomPrefixes.push(this.getRandInt(this.PREFIXES.length));
         }
         this.loaded = true;
         console.log(this.randomUsers)
@@ -168,6 +188,14 @@ export class GeneratorComponent implements OnInit {
 
     getRandInt(max: number){
         return Math.floor(Math.random()*max);
+    }
+
+    refresh(){
+        window.location.reload();
+    }
+
+    back(){
+        this.location.back();
     }
 
     incrementProgressBarPercent(percent: number){

@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
     this.N = 2;
     this.M = 100;
 
-    Rx.Observable.timer(0, 1500).subscribe(() => {
+    Rx.Observable.timer(0, 1000).subscribe(() => {
       for(let i = 0; i < this.inputsChanged.length; i++){
         if(this.inputsChanged[i]){
           this.twitter.getUserData(this.inputs[i]['text']).then((res) => {

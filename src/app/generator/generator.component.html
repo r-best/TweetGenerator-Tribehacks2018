@@ -10,7 +10,15 @@
     <div *ngIf="loaded">
       <h4 class="text-center">Tweets Generated From Twitter User<label *ngIf="userData.length > 1">s</label>:</h4>
       <h4 class="text-center" *ngFor="let user of userData"> @{{user['screen_name']}}</h4>
-      <div class="row border mb-3 rounded" *ngFor="let tweet of generated_tweets; let i = index">
+      <div class="row text-center mb-3">
+        <div class="col">
+          <button (click)="refresh()" class="btn-sm btn-primary">Generate More</button>
+        </div>
+        <div class="col">
+          <button (click)="back()" class="btn-sm btn-primary">Return to Home</button>
+        </div>
+      </div>
+      <div class="row border mb-3 rounded" *ngFor="let tweet of generated_tweets; let i = index" style="background-color:#f8fafb">
         <div class="col-1 pt-1">
           <img src="{{userData[randomUsers[i]]['profile_image_url']}}" class="rounded-circle img-hor-vert"/>
         </div>
@@ -18,7 +26,7 @@
           <div class="pl-3">
             <div class="row">
               <div class="col">
-                <span class="font-weight-bold">Almost {{userData[randomUsers[i]]['name']}} </span>
+                <span class="font-weight-bold">{{PREFIXES[randomPrefixes[i]]}}{{userData[randomUsers[i]]['name']}} </span>
                 <span class="font-italic">@{{userData[randomUsers[i]]['screen_name']}}</span>
               </div>
             </div>
@@ -27,7 +35,29 @@
                 <label>{{tweet}}</label>
               </div>
             </div>
+            <div class="row pt-2">
+              <div class="col">
+                <img src="{{replyImg}}" style="height:35px;width:35px;"/>
+              </div>
+              <div class="col">
+                <img src="{{retweetImg}}" style="height:35px;width:35px;"/>
+              </div>
+              <div class="col">
+                <img src="{{favImg}}" style="height:35px;width:35px;"/>
+              </div>
+              <div class="col">
+                <img src="{{mailImg}}" style="height:35px;width:35px;"/>
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
+      <div class="row text-center mb-3">
+        <div class="col">
+          <button (click)="refresh()" class="btn-sm btn-primary">Generate More</button>
+        </div>
+        <div class="col">
+          <button (click)="back()" class="btn-sm btn-primary">Return to Home</button>
         </div>
       </div>
     </div>
