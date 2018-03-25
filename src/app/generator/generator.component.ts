@@ -112,13 +112,10 @@ export class GeneratorComponent implements OnInit {
                 }
             });
             completedCalculations++;
-            let progress = completedCalculations / totalToCalculate;
-            console.log("TOTALTOCALCULATE", totalToCalculate)
-            console.log("PROGRESS", progress)
+            let progress = completedCalculations / totalToCalculate * 100;
             if(progress > lastProgressUpdate + UPDATE_PROGRESS_INCR){
                 lastProgressUpdate += UPDATE_PROGRESS_INCR;
                 this.incrementProgressBarPercent(UPDATE_PROGRESS_INCR);
-                console.log(lastProgressUpdate);
             }
         });
         console.log(P)
