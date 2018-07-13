@@ -4,7 +4,7 @@ import { Http, Headers } from '@angular/http';
 @Injectable()
 export class TwitterService {
 
-  API_URL: string = `http://tapi.bobbybest.cool`;
+  API_URL: string = `http://api.bobbybest.cool`;
 
   constructor(private http: Http) {
     
