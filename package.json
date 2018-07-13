@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "ng": "ng",
     "start": "ng serve -host 0.0.0.0 --port 3000 --disable-host-check",
-    "build": "ng build --prod",
+    "build": "ng build",
+
+    "docker:build": "docker build -t tweetgen .",
+    "docker:run": "docker run -d --name tweetgen tweetgen",
+
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
